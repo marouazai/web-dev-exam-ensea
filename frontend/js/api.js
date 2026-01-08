@@ -84,124 +84,37 @@ export const createRecipe = async (recipeData) => {
 	}
 }
 
-// ============================================
-// NOTES POUR LES ÉTUDIANTS
-// ============================================
-/*
-STRUCTURE D'UN APPEL FETCH:
-
-Format de base:
-const response = await fetch(url, options)
-
-Pour un GET (simple):
-const response = await fetch('http://localhost:3000/api/recipes')
-
-Pour un POST (avec données):
-const response = await fetch('http://localhost:3000/api/recipes', {
-	method: 'POST',
-	headers: {
-		'Content-Type': 'application/json'
-	},
-	body: JSON.stringify(data)
-})
-
-MÉTHODES HTTP:
-
-GET     → Récupérer des données (lecture)
-POST    → Créer une ressource (création)
-PUT     → Mettre à jour une ressource (modification complète)
-DELETE  → Supprimer une ressource (suppression)
-
-HEADERS:
-
-Content-Type: 'application/json'
-→ Indique qu'on envoie du JSON dans le body
-
-BODY:
-
-JSON.stringify(objet)
-→ Convertit un objet JavaScript en string JSON
-→ Nécessaire car fetch n'accepte que des strings dans body
-
-Exemple:
-const data = { name: 'Pizza', prepTime: 30 }
-const jsonString = JSON.stringify(data)
-// Résultat: '{"name":"Pizza","prepTime":30}'
-
-GESTION DES ERREURS:
-
-response.ok
-→ true si le status est 200-299 (succès)
-→ false si 400-499 (erreur client) ou 500-599 (erreur serveur)
-
-throw error
-→ Lance une erreur qui sera catchée par le try/catch du code appelant
-→ Permet à main.js de gérer l'erreur avec un alert()
-
-ASYNC/AWAIT:
-
-await fetch()        → Attend la réponse du serveur
-await response.json() → Attend la conversion en JSON
-
-IMPORTANT: await ne peut être utilisé que dans une fonction async!
-
-PATTERN COMPLET D'UNE FONCTION API:
-
-export const maFonction = async (parametre) => {
+export const getOneRecipe = async (recipeId) => {
 	try {
-		// 1. Préparer les options (si POST/PUT/DELETE)
-		const options = { method: 'POST', headers: {...}, body: ... }
-		
-		// 2. Faire la requête
-		const response = await fetch(url, options)
-		
-		// 3. Vérifier le succès
-		if (!response.ok) {
-			throw new Error(`Erreur: ${response.status}`)
+		console.log("API recipeData:", recipeId)
+		// TODO 1: Créer l'objet de configuration pour fetch
+		// Il doit contenir:
+		// - method: 'GET'
+		// - headers: { 'Content-Type': 'application/json' }
+		// - recipeId: recipeId dans l'URL
+
+		// TODO: Compléter l'objet options ici
+		const options = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
 		}
-		
-		// 4. Extraire les données
-		const data = await response.json()
-		
-		// 5. Retourner les données
-		return data
-		
+		const url = `${API_BASE_URL}/${recipeId}`
+
+		// TODO 2: Faire la requête GET avec fetch(API_BASE_URL, options)
+		const response = await fetch(url, options) // TODO: appeler fetch avec l'URL et les options
+		console.log("API response:", response)
+
+		// TODO 3: Vérifier que la requête a réussi (response.ok)
+		// Si pas ok, throw new Error avec le status
+
+		// TODO 4: Extraire et retourner les données JSON
+		const recipe = null // TODO: appeler response.json()
+
+		return recipe
 	} catch (error) {
-		console.error('Erreur:', error)
-		throw error  // Propager pour gestion par main.js
+		console.error("Erreur lors de la création de la recette:", error)
+		throw error
 	}
 }
-
-CODES DE STATUT HTTP COURANTS:
-
-200 OK           → Succès (GET, PUT, DELETE)
-201 Created      → Ressource créée (POST)
-400 Bad Request  → Données invalides
-404 Not Found    → Ressource non trouvée
-500 Server Error → Erreur serveur
-
-DEBUGGING:
-
-Si fetch ne fonctionne pas:
-1. Vérifier que le serveur backend est démarré (npm run dev)
-2. Vérifier l'URL (http://localhost:3000/api/recipes)
-3. Regarder la console (F12) pour les erreurs
-4. Vérifier le Network tab pour voir la requête
-5. Tester avec Postman pour confirmer que l'API fonctionne
-
-CORS (Cross-Origin Resource Sharing):
-
-Si vous voyez une erreur CORS:
-→ Le backend doit avoir le middleware cors configuré
-→ Vérifiez que server.js contient: app.use(cors())
-
-DIFFÉRENCE ENTRE response ET data:
-
-response        → L'objet Response complet de fetch
-response.ok     → Boolean: la requête a réussi?
-response.status → Number: code HTTP (200, 404, etc.)
-response.json() → Méthode pour extraire le JSON
-
-data            → Les données extraites du response
-                → C'est ce qu'on manipule et retourne
-*/

@@ -386,3 +386,7 @@ N'oubliez pas : **la pratique est la meilleure façon d'apprendre le développem
 Vous avez toutes les connaissances nécessaires pour réussir cet examen. Faites confiance à ce que vous avez appris et prenez votre temps.
 
 **Bonne chance ! 🚀**
+
+## Affichage des recettes
+
+![Home Page](./dynamic-home.png)
