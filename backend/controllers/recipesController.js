@@ -16,6 +16,7 @@ export const getRecipes = (req, res) => {
 	} catch (error) {
 		res.status(500).json({ error: error.message })
 	}
+	
 }
 
 // ============================================
@@ -29,12 +30,22 @@ export const getRecipes = (req, res) => {
 // 5. Si la recette n'existe pas: renvoyer une erreur 404 avec res.status(404).json()
 
 export const getRecipeById = (req, res) => {
-	try {
-		// Votre code ici
-	} catch (error) {
-		res.status(500).json({ error: error.message })
-	}
+  try {
+    const recipes = readRecipes(recipesPath)
+    const id = parseInt(req.params.id)
+
+    const recipe = recipes.find((r) => r.id === id)
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recette introuvable" })
+    }
+
+    return res.json(recipe)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 }
+
 
 // ============================================
 // CREATE A NEW RECIPE
@@ -50,13 +61,23 @@ export const getRecipeById = (req, res) => {
 // 5. Renvoyer la recette créée avec le status 201 (Created)
 
 export const createRecipe = (req, res) => {
-	try {
-		// Votre code ici
-	} catch (error) {
-		res.status(500).json({ error: error.message })
-	}
-}
+  try {
+    const recipes = readRecipes(recipesPath)
 
+    const newRecipe = {
+      id: Date.now(),
+      ...req.body
+    }
+
+    recipes.push(newRecipe)
+
+    writeRecipes(recipesPath, recipes)
+
+    return res.status(201).json(newRecipe)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
 // ============================================
 // UPDATE A RECIPE
 // ============================================
@@ -72,12 +93,38 @@ export const createRecipe = (req, res) => {
 // 7. Renvoyer la recette mise à jour
 
 export const updateRecipe = (req, res) => {
-	try {
-		// Votre code ici
-	} catch (error) {
-		res.status(500).json({ error: error.message })
-	}
+  try {
+    // 1. Lire toutes les recettes
+    const recipes = readRecipes(recipesPath)
+
+    // 2. Récupérer l'id depuis l'URL
+    const id = parseInt(req.params.id)
+
+    // 3. Trouver l'index de la recette
+    const index = recipes.findIndex((r) => r.id === id)
+
+    // 4. Si la recette n'existe pas
+    if (index === -1) {
+      return res.status(404).json({ message: "Recette introuvable" })
+    }
+
+    // 5. Fusionner les anciennes données avec les nouvelles
+    recipes[index] = {
+      ...recipes[index],
+      ...req.body,
+      id: id
+    }
+
+    // 6. Sauvegarder les modifications
+    writeRecipes(recipesPath, recipes)
+
+    // 7. Retourner la recette mise à jour
+    return res.json(recipes[index])
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 }
+
 
 // ============================================
 // DELETE A RECIPE
@@ -92,13 +139,36 @@ export const updateRecipe = (req, res) => {
 // 7. Renvoyer un message de confirmation avec status 200
 //    Exemple: { message: "Recette supprimée avec succès" }
 
+
 export const deleteRecipe = (req, res) => {
-	try {
-		// Votre code ici
-	} catch (error) {
-		res.status(500).json({ error: error.message })
-	}
+  try {
+    // 1. Lire toutes les recettes
+    const recipes = readRecipes(recipesPath)
+
+    // 2. Récupérer et convertir l'id
+    const id = parseInt(req.params.id)
+
+    // 3. Trouver l'index de la recette
+    const index = recipes.findIndex((r) => r.id === id)
+
+    // 4. Si la recette n'existe pas
+    if (index === -1) {
+      return res.status(404).json({ message: "Recette introuvable" })
+    }
+
+    // 5. Nouveau tableau sans la recette
+    const updatedRecipes = recipes.filter((r) => r.id !== id)
+
+    // 6. Sauvegarder
+    writeRecipes(recipesPath, updatedRecipes)
+
+    // 7. Confirmation
+    return res.status(200).json({ message: "Recette supprimée avec succès" })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 }
+
 
 // ============================================
 // BONUS (Optionnel - pour aller plus loin)
@@ -113,9 +183,26 @@ export const deleteRecipe = (req, res) => {
 // 5. Renvoyer les recettes filtrées
 
 export const searchRecipes = (req, res) => {
-	try {
-		// Votre code ici (BONUS)
-	} catch (error) {
-		res.status(500).json({ error: error.message })
-	}
+  try {
+    // 1. Lire toutes les recettes
+    const recipes = readRecipes(recipesPath)
+
+    // 2. Récupérer le terme de recherche
+    const search = req.query.search
+
+    // 3. Si aucun terme, retourner toutes les recettes
+    if (!search) {
+      return res.json(recipes)
+    }
+
+    // 4. Filtrer les recettes (insensible à la casse)
+    const filteredRecipes = recipes.filter((recipe) =>
+      recipe.name.toLowerCase().includes(search.toLowerCase())
+    )
+
+    // 5. Retourner les recettes filtrées
+    return res.json(filteredRecipes)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 }

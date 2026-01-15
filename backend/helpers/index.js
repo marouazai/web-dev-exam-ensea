@@ -1,12 +1,12 @@
 import fs from "fs"
 
-// Helper to read recipes
+// Lire le fichier recipes.json et retourner un tableau
 export const readRecipes = (recipesPath) => {
-	const data = fs.readFileSync(recipesPath, "utf8")
-	return JSON.parse(data)
+  const data = fs.readFileSync(recipesPath, "utf8")
+  return JSON.parse(data)
 }
 
-// Helper to write recipes
-export const writeRecipes = (recipes, recipesPath) => {
-	fs.writeFileSync(recipesPath, JSON.stringify(recipes, null, 2), "utf8")
+// Écrire le tableau des recettes dans recipes.json
+export const writeRecipes = (recipesPath, recipes) => {
+  fs.writeFileSync(recipesPath, JSON.stringify(recipes, null, 2), "utf8")
 }

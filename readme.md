@@ -390,3 +390,5 @@ Vous avez toutes les connaissances nécessaires pour réussir cet examen. Faites
 ## Affichage des recettes
 
 ![Home Page](./dynamic-home.png)
+#   e x a m e n _ d e v _ m a r o u a z a i d  
+ 

@@ -87,46 +87,65 @@ const setupEventListeners = () => {
 // ============================================
 // AJOUTER UNE NOUVELLE RECETTE
 // ============================================
-// TODO: Compléter cette fonction pour gérer l'ajout d'une recette
 // Cette fonction est appelée quand l'utilisateur soumet le formulaire dans le modal
 
 export const handleAddRecipe = async (event) => {
 	// TODO 1: Empêcher le rechargement de la page
-	// Conseil: utilisez event.preventDefault()
+	event.preventDefault()
 
 	try {
 		// TODO 2: Récupérer les valeurs des champs du formulaire
 		// Les IDs des champs sont: recipeName, recipeIngredients, recipeInstructions, recipePrepTime
-		// Conseil: utilisez document.getElementById('id').value
+		const name = document.getElementById("recipeName")?.value.trim() || ""
+		const ingredients =
+			document.getElementById("recipeIngredients")?.value.trim() || ""
+		const instructions =
+			document.getElementById("recipeInstructions")?.value.trim() || ""
 
-		const name = "" // TODO: récupérer la valeur du champ recipeName
-		const ingredients = "" // TODO: récupérer la valeur du champ recipeIngredients
-		const instructions = "" // TODO: récupérer la valeur du champ recipeInstructions
-		const prepTime = "" // TODO: récupérer la valeur du champ recipePrepTime (convertir en nombre avec parseInt)
-		const imageUrl = "" // TODO: récupérer la valeur du champ recipeImageUrl
+		// Convertir en nombre (et sécuriser)
+		const prepTimeRaw = document.getElementById("recipePrepTime")?.value || ""
+		const prepTime = parseInt(prepTimeRaw, 10)
 
+		const imageUrl =
+			document.getElementById("recipeImageUrl")?.value.trim() || ""
+
+		// Petite validation (évite d'envoyer une recette vide)
+		if (!name || !ingredients || !instructions || Number.isNaN(prepTime)) {
+			alert(
+				"Veuillez remplir tous les champs obligatoires (nom, ingrédients, instructions, temps de préparation)."
+			)
+			return
+		}
 
 		// TODO 3: Créer un objet recette avec les données récupérées
+		// (selon ton backend, ingredients/instructions peuvent être string ou array.
+		// Ici on garde string comme dans ton formulaire textarea)
 		const newRecipe = {
-			// TODO: ajouter les propriétés name, ingredients, instructions, prepTime
+			name,
+			ingredients,
+			instructions,
+			prepTime,
+			imageUrl, // ajouté
 		}
 
 		// TODO 4: Appeler l'API pour créer la recette
-		// Conseil: utilisez await createRecipe(newRecipe)
+		await createRecipe(newRecipe)
 
 		// TODO 5: Fermer le modal après la création
-		// Conseil: Bootstrap fournit une instance de modal accessible via:
-		// const modal = bootstrap.Modal.getInstance(document.getElementById('addRecipeModal'))
-		// modal.hide()
+		const modalEl = document.getElementById("addRecipeModal")
+		if (modalEl && window.bootstrap) {
+			const modal = window.bootstrap.Modal.getInstance(modalEl)
+			if (modal) modal.hide()
+		}
 
 		// TODO 6: Afficher un message de succès
-		// Conseil: utilisez alert('Recette ajoutée avec succès!')
+		alert("Recette ajoutée avec succès !")
 
 		// TODO 7: Recharger la liste des recettes pour afficher la nouvelle
-		// Conseil: appelez la fonction loadRecipes()
+		await loadRecipes()
 
 		// TODO 8: Réinitialiser le formulaire
-		// Conseil: utilisez event.target.reset()
+		event.target.reset()
 	} catch (error) {
 		console.error("Erreur lors de l'ajout de la recette:", error)
 		alert("Erreur lors de l'ajout de la recette. Veuillez réessayer.")
